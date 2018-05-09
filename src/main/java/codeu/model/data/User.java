@@ -15,14 +15,16 @@
 package codeu.model.data;
 
 import java.time.Instant;
-import java.util.UUID;
+import java.util.*;
 
 /** Class representing a registered user. */
 public class User {
   private final UUID id;
   private final String name;
-  private final String password;
+  private String password;
   private final Instant creation;
+
+  private List<String> following;
 
   /**
    * Constructs a new User.
@@ -32,11 +34,14 @@ public class User {
    * @param password the password of this User
    * @param creation the creation time of this User
    */
-  public User(UUID id, String name, String password, Instant creation) {
+
+  public User(UUID id, String name, String password, Instant creation, String followingString) {
     this.id = id;
     this.name = name;
     this.password = password;
     this.creation = creation;
+    this.following = new ArrayList<>();
+    this.following.addAll(Arrays.asList(followingString.split(",")));
   }
 
   /**
@@ -61,9 +66,30 @@ public class User {
   }
 
   /**
+   * Resets the password of this User.
+   */
+  public void setPassword(String password) { this.password = password; }
+
+  /**
    * Returns the password of this User.
    */
   public String getPassword() {
     return password;
+  }
+
+  public List<String> getFollowing() {
+    return following;
+  }
+
+  public String getFollowingUsersString () {
+    StringJoiner sj = new StringJoiner(",");
+    for(String s: following) {
+      sj.add(s);
+    }
+    return sj.toString();
+  }
+
+  public void setFollowing(List<String> following) {
+    this.following = following;
   }
 }
