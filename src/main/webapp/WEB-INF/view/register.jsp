@@ -28,7 +28,6 @@
     <a href="/about.jsp">About</a>
     <a href="/activityfeed">Activity Feed</a>
   </nav>
-
  <div id="container">
    <h1>Register</h1>
    <% if(request.getAttribute("error") != null){ %>
