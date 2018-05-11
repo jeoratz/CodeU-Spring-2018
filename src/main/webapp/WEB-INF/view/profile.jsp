@@ -78,6 +78,10 @@ Profile profile = (Profile) request.getAttribute("profile");
               <input type="submit" name = "update" value = "Update"</>
              </form>
         <% } else { %>
+             <form name="privateMessage" method="POST">
+             <%-- onsubmit="return false;" action="/privatechat/<%= (String) request.getSession().getAttribute("user") + (String) request.getAttribute("username") %>" --%>
+                 <input type="submit" name = "message" value = "Message" </>
+             </form>
             <h3>About</h3>
                   <p>
                     <%= (String) request.getAttribute("about")%>

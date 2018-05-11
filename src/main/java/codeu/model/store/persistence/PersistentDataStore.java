@@ -112,7 +112,14 @@ public class PersistentDataStore {
         UUID ownerUuid = UUID.fromString((String) entity.getProperty("owner_uuid"));
         String title = (String) entity.getProperty("title");
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-        Conversation conversation = new Conversation(uuid, ownerUuid, title, creationTime);
+        String user1 = (String) entity.getProperty("user1");
+        String user2 = (String) entity.getProperty("user2");
+        Conversation conversation;
+        if (user1 == null || user1 == "") {
+          conversation = new Conversation(uuid, ownerUuid, title, creationTime);
+        } else {
+          conversation = new Conversation(uuid, ownerUuid, title, creationTime, user1, user2);
+        }
         conversations.add(conversation);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
@@ -180,21 +187,34 @@ public class PersistentDataStore {
         String conversationName = (String) entity.getProperty("conversation-name");
         String conversationLink = (String) entity.getProperty("conversation-link");
         boolean inOrOut = (boolean) entity.getProperty("inOrOut");
+        boolean isPrivate = (boolean) entity.getProperty("isPrivate");
+        String user1 = (String) entity.getProperty("user1");
+        String user2 = (String) entity.getProperty("user2");
         // Depending on what type of event type it is; add different types of subclasses to event list.
         if (eventType == "login-event") {
           Event event = new LoginLogoutEvent(userName, userLink, creationTime, eventType, inOrOut);
           events.add(event);
         } 
-        else if (eventType == "conversation-event") {
-          Event event = new NewConversationEvent(creationTime, eventType, conversationName, conversationLink);
+        else if (eventType.equals("conversation-event")) {
+          Event event;
+          if (user1 == null) {
+            event = new NewConversationEvent(creationTime, eventType, conversationName, conversationLink);
+          } else {
+            event = new NewConversationEvent(creationTime, eventType, conversationName, conversationLink, isPrivate, user1, user2);
+          }
           events.add(event);
         }
-        else if (eventType == "register-event") {
+        else if (eventType.equals("register-event")) {
           Event event = new NewUserEvent(userName, userLink, creationTime, eventType);
           events.add(event);
         }
-        else if (eventType == "message-event") {
-          Event event = new NewMessageEvent(userName, userLink, creationTime, eventType, conversationName, conversationLink);
+        else if (eventType.equals("message-event")) {
+          Event event;
+          if (user1 == null) {
+            event = new NewMessageEvent(userName, userLink, creationTime, eventType, conversationName, conversationLink);
+          } else {
+            event = new NewMessageEvent(userName, userLink, creationTime, eventType, conversationName, conversationLink, isPrivate, user1, user2);
+          }
           events.add(event);
         } 
       }catch (Exception e) {
@@ -270,6 +290,8 @@ public class PersistentDataStore {
     conversationEntity.setProperty("owner_uuid", conversation.getOwnerId().toString());
     conversationEntity.setProperty("title", conversation.getTitle());
     conversationEntity.setProperty("creation_time", conversation.getCreationTime().toString());
+    conversationEntity.setProperty("user1", conversation.getUser1());
+    conversationEntity.setProperty("user2", conversation.getUser2());
     datastore.put(conversationEntity);
   }
   
@@ -289,6 +311,11 @@ public class PersistentDataStore {
       NewConversationEvent tempEvent = (NewConversationEvent) event;
       eventEntity.setProperty("conversation-name", tempEvent.getConversationName().toString());
       eventEntity.setProperty("conversation-link", tempEvent.getConversationLink().toString());
+      eventEntity.setProperty("isPrivate", tempEvent.isPrivate());
+      if(tempEvent.getUser1() != null){
+        eventEntity.setProperty("user1", tempEvent.getUser1().toString());
+        eventEntity.setProperty("user2", tempEvent.getUser2().toString());
+      }
     }
     else if (event.getEventType() == "register-event") {
       NewUserEvent tempEvent = (NewUserEvent) event;
@@ -301,6 +328,11 @@ public class PersistentDataStore {
       eventEntity.setProperty("userlink", tempEvent.getUserLink().toString());
       eventEntity.setProperty("conversation-name", tempEvent.getConversationName().toString());
       eventEntity.setProperty("conversation-link", tempEvent.getConversationLink().toString());
+      eventEntity.setProperty("isPrivate", tempEvent.isPrivate());
+      if(tempEvent.getUser1() != null){
+        eventEntity.setProperty("user1", tempEvent.getUser1().toString());
+        eventEntity.setProperty("user2", tempEvent.getUser2().toString());
+      }
     }
   }
 

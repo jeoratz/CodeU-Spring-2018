@@ -46,9 +46,12 @@ List <Event> events = (List<Event>) request.getAttribute("events");
      <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
      <a href="/following">Following</a>
      <% } else{ %>
-     <a href="/login">Login</a>
+          <a href="/login">Login</a>
+          <a href="/register">Register</a>
      <% } %>
-     <a href="/register">Register</a>
+     <% if(request.getSession().getAttribute("user") != null){ %>
+           <a href="/user/<%= request.getSession().getAttribute("user") %>">Profile</a>
+     <% } %>
      <a href="/about.jsp">About</a>
      <a href="/activityfeed">Activity Feed</a>
   </nav>
@@ -59,29 +62,30 @@ List <Event> events = (List<Event>) request.getAttribute("events");
         <ul>
           <%
           User user = (User) UserStore.getInstance().getUser((String) request.getSession().getAttribute("user"));
+          String username = (String) request.getSession().getAttribute("user");
           for (Event event : events) {
-          if (event.getEventType() == "message-event") {
-            NewMessageEvent tempEvent = (NewMessageEvent) event;
-            if (user.getFollowing().contains(tempEvent.getUserName())) {
-              String message = tempEvent.toString();
-              %>
-              <li>
-                <strong><%= message%> </strong>
-              </li>
-            <%
-            }
-          }
-          else if (event.getEventType() == "login-event") {
-            LoginLogoutEvent tempEvent = (LoginLogoutEvent) event;
-            if (user.getFollowing().contains(tempEvent.getUserName())) {
-              String message = tempEvent.toString();
-              %>
-              <li>
-                <strong><%= message%> </strong>
-              </li>
+            if (event.getEventType().equals("message-event")) {
+              NewMessageEvent tempEvent = (NewMessageEvent) event;
+              if ((user.getFollowing().contains(tempEvent.getUserName()) && !tempEvent.isPrivate()) || (username.equals(tempEvent.getUser1()) || username.equals(tempEvent.getUser2()))) {
+                String message = tempEvent.toString();
+                %>
+                <li>
+                  <strong><%= message%> </strong>
+                </li>
               <%
+              }
             }
-          }
+            else if (event.getEventType().equals("login-event")) {
+              LoginLogoutEvent tempEvent = (LoginLogoutEvent) event;
+              if (user.getFollowing().contains(tempEvent.getUserName())) {
+                String message = tempEvent.toString();
+                %>
+                <li>
+                  <strong><%= message%> </strong>
+                </li>
+                <%
+              }
+            }
         }
         %>
       </ul>

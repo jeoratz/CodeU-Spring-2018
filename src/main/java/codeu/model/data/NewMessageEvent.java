@@ -9,6 +9,9 @@ public class NewMessageEvent extends Event {
     private String userLink;
     private String conversationName;
     private String conversationLink;
+    private boolean isPrivate;
+    private String user1;
+    private String user2;
 
     /**
      * Constructs a new event that monitors users sending messages activities
@@ -27,6 +30,19 @@ public class NewMessageEvent extends Event {
         super.eventType = eventType;
         this.conversationName = conversationName;
         this.conversationLink = conversationLink;
+        this.isPrivate = false;
+    }
+
+    public NewMessageEvent(String userName, String userLink, Instant timeStamp, String eventType, String conversationName, String conversationLink, boolean isPrivate, String user1, String user2) {
+        this.userName = userName;
+        this.userLink = userLink;
+        super.timeStamp = timeStamp;
+        super.eventType = eventType;
+        this.conversationName = conversationName;
+        this.conversationLink = conversationLink;
+        this.isPrivate = isPrivate;
+        this.user1 = user1;
+        this.user2 = user2;
     }
 
     public String getUserName() {
@@ -60,6 +76,12 @@ public class NewMessageEvent extends Event {
     public void setConversationLink(String conversationLink) {
         this.conversationLink = conversationLink;
     }
+
+    public boolean isPrivate() { return isPrivate; }
+
+    public String getUser1() { return user1; }
+
+    public String getUser2() { return user2; }
 
     @Override
     public String toString() {

@@ -4,9 +4,14 @@ import codeu.model.store.basic.UserStore;
 import codeu.model.data.User;
 import codeu.model.data.Profile;
 import codeu.model.data.Message;
+import codeu.model.data.Event;
+import codeu.model.data.Conversation;
+import codeu.model.data.NewConversationEvent;
 import codeu.model.store.basic.ProfileStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
+import codeu.model.store.basic.ConversationStore;
+import codeu.model.store.basic.EventStore;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.List;
@@ -28,6 +33,8 @@ public class ProfileServlet extends HttpServlet {
 
   private MessageStore messageStore;
   private UserStore userStore;
+  private ConversationStore conversationStore;
+  private EventStore eventStore;
 
   /**
    * Set up state for handling profile creation-related requests. This method is only called when
@@ -39,6 +46,8 @@ public class ProfileServlet extends HttpServlet {
     setProfileStore(ProfileStore.getInstance());
     setMessageStore(MessageStore.getInstance());
     setUserStore(UserStore.getInstance());
+    setConversationStore(ConversationStore.getInstance());
+    setEventStore(EventStore.getInstance());
   }
 
   /**
@@ -64,6 +73,23 @@ public class ProfileServlet extends HttpServlet {
   void setUserStore(UserStore userStore) {
     this.userStore = userStore;
   }
+
+  /**
+   * Sets the ConversationStore used by this servlet. This function provides a common setup method for
+   * use by the test framework or the servlet's init() function.
+   */
+  void setConversationStore(ConversationStore conversationStore) {
+    this.conversationStore = conversationStore;
+  }
+
+  /**
+   * Sets the EventStore used by this servlet. This function provides a common setup method for
+   * use by the test framework or the servlet's init() function.
+   */
+  void setEventStore(EventStore eventStore) {
+    this.eventStore = eventStore;
+  }
+
 
   /** doGet function will eventually output HTML directly from servlet */
   @Override
@@ -111,7 +137,59 @@ public class ProfileServlet extends HttpServlet {
       profile.setAbout(newAbout);
       profileStore.addProfile(profile);
     }
+    if(request.getParameter("message") != null) {
+      String otherUsername = username;
+      User otherUser = user;
+      username = (String) request.getSession().getAttribute("user");
+      user = (User) userStore.getUser(username);
 
-    response.sendRedirect("/user/" + username);
+      if (username == null) {
+        // user is not logged in, don't let them create a private conversation
+        request.setAttribute("error", "Please log in to send a private message");
+        response.sendRedirect("/user/" + otherUsername);
+        return;
+      }
+
+      if (user == null) {
+        // user was not found, don't let them create a private conversation
+        request.setAttribute("error", "Please log in to send a private message");
+        System.out.println("User not found: " + username);
+        response.sendRedirect("/user/" + otherUsername);
+        return;
+      }
+
+      if(username.equals(otherUsername)) {
+        request.setAttribute("error", "You cannot message yourself!");
+        response.sendRedirect("/user/" + otherUsername);
+        return;
+      }
+
+      String conversationTitle = username + otherUsername;
+      String altTitle = otherUsername + username;
+
+      if (conversationStore.isTitleTaken(conversationTitle)) {
+        // conversation title is already taken, just go into that conversation instead of creating a
+        // new one
+        response.sendRedirect("/privatechat/" + conversationTitle);
+        return;
+      }
+
+      if (conversationStore.isTitleTaken(altTitle)) {
+        // conversation title is already taken, just go into that conversation instead of creating a
+        // new one
+        response.sendRedirect("/privatechat/" + altTitle);
+        return;
+      }
+
+      Conversation conversation =
+          new Conversation(UUID.randomUUID(), user.getId(), conversationTitle, Instant.now(), username, otherUsername);
+
+      conversationStore.addConversation(conversation);
+      Event event = new NewConversationEvent(Instant.now(), "conversation-event", conversationTitle, "placeholder-link", true, username, otherUsername);
+      eventStore.addEvent(event);
+      response.sendRedirect("/privatechat/" + conversationTitle);
+    }
+
+//    response.sendRedirect("/user/" + username);
   }
 }

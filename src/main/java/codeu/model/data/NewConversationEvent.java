@@ -7,6 +7,9 @@ import java.time.format.DateTimeFormatter;
 public class NewConversationEvent extends Event {
     private String conversationName;
     private String conversationLink;
+    private boolean isPrivate;
+    private String user1;
+    private String user2;
 
     /**
      * Constructs a new event that displays newly created conversations.
@@ -21,6 +24,17 @@ public class NewConversationEvent extends Event {
         super.eventType = eventType;
         this.conversationName = conversationName;
         this.conversationLink = conversationLink;
+        this.isPrivate = false;
+    }
+
+    public NewConversationEvent(Instant timeStamp, String eventType, String conversationName, String conversationLink, boolean isPrivate, String user1, String user2) {
+        super.timeStamp = timeStamp;
+        super.eventType = eventType;
+        this.conversationName = conversationName;
+        this.conversationLink = conversationLink;
+        this.isPrivate = isPrivate;
+        this.user1 = user1;
+        this.user2 = user2;
     }
 
     public String getConversationName() {
@@ -38,6 +52,11 @@ public class NewConversationEvent extends Event {
     public void setConversationLink(String conversationLink) {
         this.conversationLink = conversationLink;
     }
+    public boolean isPrivate() { return isPrivate; }
+
+    public String getUser1() { return user1; }
+
+    public String getUser2() { return user2; }
 
     @Override
     public String toString() {

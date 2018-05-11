@@ -53,12 +53,12 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
      <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
      <a href="/following">Following</a>
      <% } else{ %>
-     <a href="/login">Login</a>
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
      <% } %>
      <% if(request.getSession().getAttribute("user") != null){ %>
             <a href="/user/<%= request.getSession().getAttribute("user") %>">Profile</a>
         <% } %>
-     <a href="/register">Register</a>
      <a href="/about.jsp">About</a>
      <a href="/activityfeed">Activity Feed</a>
 
@@ -75,8 +75,7 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
       <ul>
     <%
       for (Message message : messages) {
-        String author = UserStore.getInstance()
-          .getUser(message.getAuthorId()).getName();
+        String author = UserStore.getInstance().getUser(message.getAuthorId()).getName();
     %>
       <li><strong><%= author %>:</strong> <%= message.getContent() %></li>
     <%
@@ -87,14 +86,22 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 
     <hr/>
 
-    <% if (request.getSession().getAttribute("user") != null) { %>
-    <form action="/chat/<%= conversation.getTitle() %>" method="POST">
-        <input type="text" name="message">
-        <br/>
-        <button type="submit">Send</button>
-    </form>
-    <% } else { %>
-      <p><a href="/login">Login</a> to send a message.</p>
+    <% if (request.getSession().getAttribute("user") != null) {
+        if(conversation.getUser1() == null) { %>
+          <form action="/chat/<%= conversation.getTitle() %>" method="POST">
+              <input type="text" name="message">
+              <br/>
+              <button type="submit">Send</button>
+          </form>
+        <% } else { %>
+            <form action="/privatechat/<%= conversation.getTitle() %>" method="POST">
+               <input type="text" name="message">
+               <br/>
+               <button type="submit">Send</button>
+               </form>
+          <% }
+    } else { %>
+          <p><a href="/login">Login</a> to send a message.</p>
     <% } %>
 
     <hr/>

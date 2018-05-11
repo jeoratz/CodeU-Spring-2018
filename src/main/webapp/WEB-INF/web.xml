@@ -116,4 +116,14 @@
     <url-pattern>/user/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>PrivateConversationServlet</servlet-name>
+    <servlet-class>codeu.controller.PrivateConversationServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>PrivateConversationServlet</servlet-name>
+    <url-pattern>/privatechat/*</url-pattern>
+  </servlet-mapping>
+
 </web-app>

@@ -45,9 +45,12 @@ List <Event> events = (List<Event>) request.getAttribute("events");
      <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
      <a href="/following">Following</a>
      <% } else{ %>
-     <a href="/login">Login</a>
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
      <% } %>
-     <a href="/register">Register</a>
+     <% if(request.getSession().getAttribute("user") != null){ %>
+          <a href="/user/<%= request.getSession().getAttribute("user") %>">Profile</a>
+     <% } %>
      <a href="/about.jsp">About</a>
      <a href="/activityfeed">Activity Feed</a>
   </nav>
@@ -58,13 +61,37 @@ List <Event> events = (List<Event>) request.getAttribute("events");
   			<ul>
   				<%
   				for (Event event : events) {
-  					String message = event.toString();
-  				%>
-  				<li>
-  					<strong><%= message%> </strong>
-  				</li>
-  				<%
-  			}
+  					if(event.getEventType().equals("conversation-event")){
+  					  NewConversationEvent conversationEvent = (NewConversationEvent) event;
+  					  if (!conversationEvent.isPrivate()){
+  					    String message = event.toString();
+                %>
+                    <li>
+                     <strong><%= message%> </strong>
+                    </li>
+                <%
+  				    }
+  				  }
+            else if(event.getEventType().equals("message-event")){
+              NewMessageEvent messageEvent = (NewMessageEvent) event;
+              if (!messageEvent.isPrivate()){
+                String message = event.toString();
+                %>
+                    <li>
+                     <strong><%= message%> </strong>
+                    </li>
+                <%
+              }
+            }
+  				  else {
+  				    String message = event.toString();
+              %>
+                <li>
+                <strong><%= message%> </strong>
+                </li>
+               <%
+  				  }
+  			  }
   			%>
   		</ul>
   	</div>

@@ -31,12 +31,12 @@
       <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
     <a href="/following">Following</a>
     <% } else{ %>
-    <a href="/login">Login</a>
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
      <% } %>
     <% if(request.getSession().getAttribute("user") != null){ %>
             <a href="/user/<%= request.getSession().getAttribute("user") %>">Profile</a>
-        <% } %>
-    <a href="/register">Register</a>
+    <% } %>
 
     <a href="/about.jsp">About</a>
     <a href="/activityfeed">Activity Feed</a>
@@ -77,10 +77,12 @@
       <ul class="mdl-list">
     <%
       for(Conversation conversation : conversations){
-    %>
-      <li><a href="/chat/<%= conversation.getTitle() %>">
-        <%= conversation.getTitle() %></a></li>
-    <%
+        if(conversation.getUser1() == "") {
+          %>
+            <li><a href="/chat/<%= conversation.getTitle() %>">
+              <%= conversation.getTitle() %></a></li>
+          <%
+        }
       }
     %>
       </ul>
