@@ -49,10 +49,13 @@ Profile profile = (Profile) request.getAttribute("profile");
       <a href="/login">Login</a>
       <a href="/register">Register</a>
     <% } %>
-    <a href="/about.jsp">About</a>
     <% if(request.getSession().getAttribute("user") != null){ %>
         <a href="/user/<%= request.getSession().getAttribute("user") %>">Profile</a>
+        <a href="/messages.jsp">Messages</a>
     <% } %>
+    <a href="/about.jsp">About</a>
+    <a href="/users.jsp">Users</a>
+    <a href="/activityfeed">Activity Feed</a>
   </nav>
 
   <script language="javascript">
@@ -64,6 +67,9 @@ Profile profile = (Profile) request.getAttribute("profile");
   <div id="container">
     <div
       style="width:75%; margin-left:auto; margin-right:auto; margin-top: 50px;">
+      <% if(request.getAttribute("error") != null){ %>
+          <h2 style="color:red"><%= request.getAttribute("error") %></h2>
+      <% } %>
       <h1><%= request.getAttribute("username")%></h1>
       <% if(request.getAttribute("username").equals(request.getSession().getAttribute("user"))){%>
             <form onsubmit="return false;" name="show" action="/user/<%= request.getSession().getAttribute("user") %>" method="POST">

@@ -65,6 +65,11 @@ public class UserStore {
     users = new ArrayList<>();
   }
 
+  /** Access the current set of users known to the application. */
+  public List<User> getAllUsers() {
+    return users;
+  }
+
   /** Load a set of randomly-generated Message objects. */
   public void loadTestData() {
     users.addAll(DefaultDataStore.getInstance().getAllUsers());

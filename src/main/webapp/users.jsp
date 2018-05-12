@@ -13,10 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 --%>
+<%@ page import="java.util.List" %>
+<%@ page import="codeu.model.data.User" %>
+<%@ page import="codeu.model.store.basic.UserStore" %>
+
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CodeU Chat App</title>
+  <title>Users</title>
   <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
@@ -28,38 +32,43 @@
       <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
     <a href="/following">Following</a>
     <% } else{ %>
-        <a href="/login">Login</a
+        <a href="/login">Login</a>
         <a href="/register">Register</a>
      <% } %>
     <% if(request.getSession().getAttribute("user") != null){ %>
             <a href="/user/<%= request.getSession().getAttribute("user") %>">Profile</a>
             <a href="/messages.jsp">Messages</a>
-        <% } %>
+    <% } %>
+
     <a href="/about.jsp">About</a>
     <a href="/users.jsp">Users</a>
     <a href="/activityfeed">Activity Feed</a>
   </nav>
 
-  <div id="container">
-    <div
-      style="width:75%; margin-left:auto; margin-right:auto; margin-top: 50px;">
+    <h1>Users</h1>
 
-      <h1>About Our CodeU Chat App</h1>
-      <p>
-        We are Team 5 - Five Guys! Our team members are:
-      </p>
-
-      <ul>
-        <li>Sophia Jefferson</li>
-        <li>Abdo Elfaramawy</li>
-        <li>Jenna Oratz</li>
-        <li>Chuong Vu</li>
+    <%
+    List<User> users = (List<User>) UserStore.getInstance().getAllUsers();
+    if(users == null || users.isEmpty()){
+    %>
+      <p>No users yet!</p>
+    <%
+    }
+    else{
+    %>
+      <ul class="mdl-list">
+    <%
+      for(User user : users){
+          %>  <li><a href="/user/<%= user.getName() %>">
+              <%= user.getName() %></a></li>
+          <%
+      }
+    %>
       </ul>
-
-      <p>
-        Features and improvements coming soon!
-      </p>
-    </div>
+    <%
+    }
+    %>
+    <hr/>
   </div>
 </body>
 </html>
