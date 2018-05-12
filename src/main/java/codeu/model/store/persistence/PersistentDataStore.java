@@ -247,7 +247,7 @@ public class PersistentDataStore {
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
         String about = (String) entity.getProperty("about");
         List<Message> messages = (List<Message>) entity.getProperty("message_history");
-        BufferedImage photo = (BufferedImage) entity.getProperty("photo");
+        String photo = (String) entity.getProperty("photo");
         Profile profile = new Profile(uuid, creationTime, about, messages, photo);
         profiles.add(profile);
       } catch (Exception e) {
@@ -350,7 +350,7 @@ public class PersistentDataStore {
     profileEntity.setProperty("creation_time", profile.getCreationTime().toString());
     profileEntity.setProperty("about", profile.getAbout());
     profileEntity.setProperty("message_history", profile.getMessages());
-    profileEntity.setProperty("photo", profile.getPhoto());
+    profileEntity.setProperty("photo", profile.getPictureURL());
     datastore.put(profileEntity);
   }
 }

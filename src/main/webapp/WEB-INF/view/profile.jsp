@@ -61,6 +61,7 @@ Profile profile = (Profile) request.getAttribute("profile");
   <script language="javascript">
       function showEdit() {
           editProfile.style.display="block";
+          photo.style.display="block";
       }
   </script>
 
@@ -72,22 +73,32 @@ Profile profile = (Profile) request.getAttribute("profile");
       <% } %>
       <h1><%= request.getAttribute("username")%></h1>
       <% if(request.getAttribute("username").equals(request.getSession().getAttribute("user"))){%>
-            <form onsubmit="return false;" name="show" action="/user/<%= request.getSession().getAttribute("user") %>" method="POST">
-                <input type="submit" name = "edit" value = "Edit" onclick="showEdit()"</>
+            <div class = "ProfilePicture">
+                  <img src = "<%= profile.getPictureURL() %>" width = "200" height = "200"/>
+            </div>
+            <form name = "photo" action="/user/<%= request.getSession().getAttribute("user") %>" method="POST">
+               Photo URL: <input type="text" name="photo" value="<%= profile.getPictureURL() %>" id="photo">
+                <input type="submit" name = "photo" value = "Update"</>
             </form>
             <h3>About</h3>
                   <p>
                     <%= (String) request.getAttribute("about")%>
-                  </p>
+             </p>
+             <form onsubmit="return false;" name="show" action="/user/<%= request.getSession().getAttribute("user") %>" method="POST">
+                             <input type="submit" name = "edit" value = "Edit" onclick="showEdit()"</>
+                         </form>
             <form name="editProfile" style="display:none" action="/user/<%= request.getSession().getAttribute("user")%>" method="POST">
               About:<textarea rows="5" cols="80" name = "newAbout" id="newAbout"></textarea>
               <input type="submit" name = "update" value = "Update"</>
              </form>
         <% } else { %>
-             <form name="privateMessage" method="POST">
-             <%-- onsubmit="return false;" action="/privatechat/<%= (String) request.getSession().getAttribute("user") + (String) request.getAttribute("username") %>" --%>
-                 <input type="submit" name = "message" value = "Message" </>
-             </form>
+           <div class = "ProfilePicture">
+                       <img src = "<%= profile.getPictureURL() %>" width = "200" height = "200"/>
+           </div>
+            <form name="privateMessage" method="POST">
+            <%-- onsubmit="return false;" action="/privatechat/<%= (String) request.getSession().getAttribute("user") + (String) request.getAttribute("username") %>" --%>
+                <input type="submit" name = "message" value = "Message" </>
+            </form>
             <h3>About</h3>
                   <p>
                     <%= (String) request.getAttribute("about")%>

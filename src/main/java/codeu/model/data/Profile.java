@@ -15,7 +15,7 @@ public class Profile {
     private String password;
     private String about;
     private List<Message> messages = new ArrayList<Message>();
-    private BufferedImage photo;
+    private String photo;
 
     /**
      * Constructs a new Profile.
@@ -27,7 +27,7 @@ public class Profile {
      * @param photo    User's profile photo
      */
     public Profile(UUID id, Instant creation, String about,
-                   List<Message> messages, BufferedImage photo) {
+                   List<Message> messages, String photo) {
         UserStore userStore = UserStore.getInstance();
         this.id = id;
         this.creation = creation;
@@ -99,10 +99,10 @@ public class Profile {
     /**
      * Sets a new profile photo
      */
-    public void setPhoto(BufferedImage photo) { this.photo = photo; }
+    public void setPhoto(String photo) { this.photo = photo; }
 
     /**
      * Gets the current profile photo
      */
-    public BufferedImage getPhoto() { return photo; }
+    public String getPictureURL() { return photo; }
 }

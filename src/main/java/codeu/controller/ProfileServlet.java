@@ -113,7 +113,7 @@ public class ProfileServlet extends HttpServlet {
     request.setAttribute("profile", profile);
     request.setAttribute("about", profile.getAbout());
     request.setAttribute("messages", messages);
-    request.setAttribute("photo", profile.getPhoto());
+    request.setAttribute("photo", profile.getPictureURL());
 
     request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
   }
@@ -137,6 +137,13 @@ public class ProfileServlet extends HttpServlet {
       profile.setAbout(newAbout);
       profileStore.addProfile(profile);
     }
+
+    if (request.getParameter("photo") != null) {
+      String newPhoto = request.getParameter("photo");
+      profile.setPhoto(newPhoto);
+      profileStore.addProfile(profile);
+    }
+
     if(request.getParameter("message") != null) {
       String otherUsername = username;
       User otherUser = user;

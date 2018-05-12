@@ -103,7 +103,7 @@ public class RegisterServlet extends HttpServlet {
     } catch (IOException e) {
     }
     Profile profile =
-        new Profile(user.getId(), Instant.now(), "Welcome to my " + "profile page!", null, photo);
+        new Profile(user.getId(), Instant.now(), "Welcome to my " + "profile page!", null, "http://cssway.thebigerns.com/workbench/freeway-data-tables/Resources/generic-silhouette.jpg");
     profileStore.addProfile(profile);
     Event event = new NewUserEvent(username, "placeholderLink", Instant.now(), "register-event");
     eventStore.addEvent(event);
